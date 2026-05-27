@@ -16,6 +16,23 @@ export const LightControl: React.FC<LightControlProps> = ({
   onIncreaseBrightness,
   onDecreaseBrightness,
 }) => {
+  const getBrightnessLevel = (value: number, isOn: boolean) => {
+    if (!isOn) return { label: 'Đã ngắt nguồn 🔌', color: '#888' };
+    if (value === 0) return { label: 'Tối đen 🌑 (0%)', color: '#666' };
+    if (value <= 30) return { label: 'Sáng mờ 🕯️ (Yếu)', color: '#ff9800' };
+    if (value <= 60) return { label: 'Sáng dịu 💡 (Trung bình)', color: '#ffb300' };
+    if (value <= 90) return { label: 'Sáng rõ ☀️ (Mạnh)', color: '#4caf50' };
+    return { label: 'Cực đại ⚡ (Rất mạnh!)', color: '#e91e63' };
+  };
+
+  const level = getBrightnessLevel(brightness, isLightOn);
+  const glowSize = 80 + (isLightOn ? (brightness / 100) * 60 : 0);
+  const glowOpacity = isLightOn ? (brightness / 100) * 0.6 : 0;
+  const bulbScale = 1 + (isLightOn ? (brightness / 100) * 0.15 : 0);
+  const dynamicBulbColor = isLightOn
+    ? `rgba(255, 235, 59, ${0.4 + (brightness / 100) * 0.6})`
+    : '#bbb';
+
   return (
     <View style={styles.childContainer}>
       <Text style={styles.headerText}>===== COMPONENT CON =====</Text>
@@ -28,11 +45,40 @@ export const LightControl: React.FC<LightControlProps> = ({
         </Text>
       </Text>
       <Text style={styles.infoText}>Độ sáng nhận được: {brightness}%</Text>
+      
+      {/* Phân loại mức sáng nhận diện */}
+      <Text style={styles.infoText}>
+        Nhận diện mức sáng:{' '}
+        <Text style={[styles.levelText, { color: level.color }]}>
+          {level.label}
+        </Text>
+      </Text>
 
-      {/* Simple Bulb Illustration */}
+      {/* Dynamic Bulb Illustration with Glow Effect */}
       <View style={styles.bulbContainer}>
-        <View style={[styles.bulb, isLightOn ? styles.bulbOn : styles.bulbOff]}>
-          <Text style={styles.bulbEmoji}>{isLightOn ? '💡' : '🔌'}</Text>
+        <View style={styles.bulbWrapper}>
+          <View
+            style={[
+              styles.glowRing,
+              {
+                width: glowSize,
+                height: glowSize,
+                borderRadius: glowSize / 2,
+                opacity: glowOpacity,
+              },
+            ]}
+          />
+          <View
+            style={[
+              styles.bulb,
+              {
+                backgroundColor: dynamicBulbColor,
+                transform: [{ scale: bulbScale }],
+              },
+            ]}
+          >
+            <Text style={styles.bulbEmoji}>{isLightOn ? '💡' : '🔌'}</Text>
+          </View>
         </View>
       </View>
 
@@ -70,6 +116,11 @@ const styles = StyleSheet.create({
     borderColor: '#d12e6a',
     borderRadius: 12,
     backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   headerText: {
     fontSize: 18,
@@ -91,9 +142,28 @@ const styles = StyleSheet.create({
     color: 'red',
     fontWeight: 'bold',
   },
+  levelText: {
+    fontWeight: '700',
+  },
   bulbContainer: {
     alignItems: 'center',
     marginVertical: 16,
+  },
+  bulbWrapper: {
+    width: 160,
+    height: 160,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  glowRing: {
+    position: 'absolute',
+    backgroundColor: '#ffeb3b',
+    shadowColor: '#ffeb3b',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 20,
+    elevation: 10,
   },
   bulb: {
     width: 80,
@@ -103,12 +173,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#333',
-  },
-  bulbOn: {
-    backgroundColor: '#ffeb3b',
-  },
-  bulbOff: {
     backgroundColor: '#bbb',
+    zIndex: 2,
   },
   bulbEmoji: {
     fontSize: 36,
