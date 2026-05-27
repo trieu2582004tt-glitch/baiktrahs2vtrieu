@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "ReactnativeVTrieu",
-    "slug": "ReactnativeVTrieu",
+    "name": "ExpoApp",
+    "slug": "ExpoApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "reactnativevtrieu",
+    "scheme": "expoapp",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -24,7 +24,6 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
       [
         "expo-splash-screen",
         {
@@ -35,10 +34,6 @@
           }
         }
       ]
-    ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
-    }
+    ]
   }
 }
